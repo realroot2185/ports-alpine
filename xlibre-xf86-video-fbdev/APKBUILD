@@ -1,0 +1,40 @@
+# Based on Alpine package of
+# Alpine maintainer "Natanael Copa <ncopa@alpinelinux.org>"
+#
+# Maintainer: realroot <user3mila@disroot.org>
+pkgname=xlibre-xf86-video-fbdev
+pkgver=0.5.1.1
+pkgrel=0
+pkgdesc="Xlibre video driver for framebuffer device"
+url="https://github.com/X11Libre/xf86-video-fbdev"
+arch="all"
+license="MIT"
+subpackages="$pkgname-doc"
+makedepends="autoconf automake xlibre-xserver-dev libtool libxi-dev util-macros xorgproto"
+source="https://github.com/X11Libre/xf86-video-fbdev/archive/refs/tags/$pkgname-$pkgver.tar.gz"
+
+build() {
+	cd xf86-video-fbdev-xlibre-xf86-video-fbdev-$pkgver
+	export CFLAGS="${CFLAGS/-fno-plt}"
+	export CXXFLAGS="${CXXFLAGS/-fno-plt}"
+	export LDFLAGS="$LDFLAGS -Wl,-z,lazy"
+	./autogen.sh
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr
+	make
+}
+
+check() {
+	make check
+}
+
+package() {
+	cd src/xf86-video-fbdev-xlibre-xf86-video-fbdev-$pkgver
+	make DESTDIR="$pkgdir" install
+}
+
+sha512sums="
+dd7a2058859deb166e834add5fa05680e3375e1f92dfc1ab9ced98740ce3804b05f45d8e6ba11248e8a56fdfdfaca2f009000f21c4f24e8295925b09bdfbb5ac  xlibre-xf86-video-fbdev-0.5.1.1.tar.gz
+"
